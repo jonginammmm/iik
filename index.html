@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#08090c">
+<title>Bugun dam ol...</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    background:#050609;
+    color:white;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "Segoe UI",
+        sans-serif;
+}
+
+/* ================= BACKGROUND ================= */
+
+#bg{
+    position:fixed;
+    inset:-5%;
+    z-index:-10;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.20),
+            rgba(0,0,0,.48) 45%,
+            rgba(0,0,0,.82)
+        ),
+        url("background.jpg") center center / cover no-repeat;
+
+    filter:
+        saturate(.88)
+        contrast(1.05);
+
+    transform:scale(1.04);
+
+    animation:
+        slowZoom 22s ease-in-out infinite alternate;
+}
+
+@keyframes slowZoom{
+    from{transform:scale(1.04)}
+    to{transform:scale(1.09)}
+}
+
+/* yumshoq yorug'lik */
+
+#ambient{
+    position:fixed;
+    inset:0;
+    z-index:-9;
+    pointer-events:none;
+
+    background:
+        radial-gradient(
+            circle at 50% 38%,
+            rgba(255,255,255,.08),
+            transparent 38%
+        ),
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(0,0,0,.35)
+        );
+}
+
+/* mayda grain */
+
+#grain{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    pointer-events:none;
+    opacity:.025;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ================= APP ================= */
+
+#app{
+    position:relative;
+    width:100%;
+    height:100%;
+}
+
+/* yuqori yozuv */
+
+.top{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    z-index:20;
+
+    padding:
+        calc(16px + env(safe-area-inset-top))
+        18px 12px;
+
+    display:flex;
+    justify-content:space-between;
+
+    font-size:9px;
+    letter-spacing:.22em;
+
+    color:rgba(255,255,255,.42);
+
+    text-transform:uppercase;
+}
+
+/* ================= SCREENS ================= */
+
+.screen{
+    position:absolute;
+    inset:0;
+
+    padding:
+        75px 17px
+        calc(35px + env(safe-area-inset-bottom));
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    opacity:0;
+    visibility:hidden;
+
+    transform:
+        translateY(25px)
+        scale(.985);
+
+    transition:
+        opacity .8s ease,
+        transform .8s cubic-bezier(.2,.8,.2,1);
+}
+
+.screen.active{
+    opacity:1;
+    visibility:visible;
+
+    transform:none;
+}
+
+/* ================= GLASS ================= */
+
+.glass{
+    width:100%;
+    max-width:600px;
+    max-height:calc(100vh - 110px);
+
+    overflow:auto;
+
+    padding:30px 22px;
+
+    border-radius:32px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.13),
+            rgba(255,255,255,.045)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    backdrop-filter:
+        blur(24px)
+        saturate(1.35);
+
+    -webkit-backdrop-filter:
+        blur(24px)
+        saturate(1.35);
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.58),
+        inset 0 1px 0 rgba(255,255,255,.20);
+
+    scrollbar-width:none;
+}
+
+.glass::-webkit-scrollbar{
+    display:none;
+}
+
+/* ================= TYPOGRAPHY ================= */
+
+.mini{
+    font-size:9px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+
+    color:rgba(255,255,255,.43);
+
+    margin-bottom:17px;
+}
+
+h1{
+    font-size:
+        clamp(43px,13vw,78px);
+
+    line-height:.91;
+
+    letter-spacing:-.075em;
+
+    margin-bottom:23px;
+}
+
+h2{
+    font-size:
+        clamp(30px,8.5vw,53px);
+
+    line-height:.96;
+
+    letter-spacing:-.065em;
+
+    margin-bottom:20px;
+}
+
+.text{
+    font-size:15px;
+    line-height:1.85;
+
+    color:
+        rgba(255,255,255,.82);
+}
+
+.hand{
+    font-family:
+        "Segoe Print",
+        "Bradley Hand",
+        "Comic Sans MS",
+        cursive;
+
+    font-size:15px;
+    line-height:1.95;
+
+    color:
+        rgba(255,255,255,.90);
+}
+
+/* ================= BUTTON ================= */
+
+.buttons{
+    margin-top:28px;
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+}
+
+button{
+    border:
+        1px solid
+        rgba(255,255,255,.22);
+
+    background:
+        rgba(255,255,255,.075);
+
+    color:#fff;
+
+    padding:
+        13px 18px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+
+    transition:.2s;
+}
+
+button:active{
+    transform:scale(.93);
+    background:
+        rgba(255,255,255,.18);
+}
+
+.primary{
+    background:
+        rgba(255,255,255,.15);
+
+    border-color:
+        rgba(255,255,255,.32);
+}
+
+/* ================= REST CARD ================= */
+
+.rest{
+    text-align:center;
+}
+
+.rest-icon{
+    width:80px;
+    height:80px;
+
+    margin:0 auto 25px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    box-shadow:
+        0 0 50px rgba(255,255,255,.08);
+
+    font-size:31px;
+
+    animation:
+        breathing 4s ease-in-out infinite;
+}
+
+@keyframes breathing{
+    0%,100%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.08);
+    }
+}
+
+/* ================= BREATH ================= */
+
+.breath{
+    margin-top:25px;
+
+    height:150px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.breath-circle{
+    width:85px;
+    height:85px;
+
+    border-radius:50%;
+
+    border:
+        1px solid
+        rgba(255,255,255,.32);
+
+    background:
+        rgba(255,255,255,.055);
+
+    box-shadow:
+        0 0 50px
+        rgba(255,255,255,.09);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:11px;
+
+    transition:
+        transform 4s ease,
+        box-shadow 4s ease;
+}
+
+.breath-circle.in{
+    transform:scale(1.45);
+
+    box-shadow:
+        0 0 90px
+        rgba(255,255,255,.20);
+}
+
+/* ================= WORK LIST ================= */
+
+.work-list{
+    margin-top:25px;
+
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+}
+
+.work{
+    display:flex;
+    align-items:center;
+    gap:13px;
+
+    padding:14px;
+
+    border-radius:20px;
+
+    background:
+        rgba(0,0,0,.13);
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    opacity:0;
+
+    transform:translateX(-15px);
+
+    animation:
+        workIn .7s forwards;
+}
+
+.work:nth-child(2){
+    animation-delay:.15s;
+}
+
+.work:nth-child(3){
+    animation-delay:.3s;
+}
+
+.work:nth-child(4){
+    animation-delay:.45s;
+}
+
+@keyframes workIn{
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.work-icon{
+    width:36px;
+    height:36px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        rgba(255,255,255,.08);
+}
+
+.work-text{
+    font-size:13px;
+    line-height:1.4;
+}
+
+.work-text small{
+    display:block;
+
+    margin-top:3px;
+
+    font-size:10px;
+
+    color:
+        rgba(255,255,255,.42);
+}
+
+/* ================= NIGHT ================= */
+
+.night{
+    position:relative;
+
+    height:190px;
+
+    margin-top:25px;
+
+    border-radius:27px;
+
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8,15,30,.55),
+            rgba(0,0,0,.35)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+}
+
+.moon{
+    position:absolute;
+
+    width:58px;
+    height:58px;
+
+    right:35px;
+    top:30px;
+
+    border-radius:50%;
+
+    background:
+        #f5f3e8;
+
+    box-shadow:
+        0 0 35px
+        rgba(255,255,255,.28);
+}
+
+.moon:after{
+    content:"";
+
+    position:absolute;
+
+    width:55px;
+    height:55px;
+
+    left:-13px;
+    top:-5px;
+
+    border-radius:50%;
+
+    background:
+        rgba(10,13,23,.9);
+}
+
+.star{
+    position:absolute;
+
+    width:2px;
+    height:2px;
+
+    border-radius:50%;
+
+    background:white;
+
+    opacity:.6;
+
+    animation:
+        twinkle 2s ease-in-out infinite;
+}
+
+@keyframes twinkle{
+    50%{opacity:.15}
+}
+
+/* ================= FINAL ================= */
+
+.final{
+    text-align:center;
+}
+
+.final-mark{
+    font-size:48px;
+
+    margin-bottom:20px;
+
+    animation:
+        softPulse 3s ease-in-out infinite;
+}
+
+@keyframes softPulse{
+    50%{
+        transform:scale(1.08);
+    }
+}
+
+.final-text{
+    min-height:280px;
+}
+
+.signature{
+    margin-top:20px;
+
+    font-family:
+        "Segoe Print",
+        cursive;
+
+    color:
+        rgba(255,255,255,.68);
+
+    font-size:14px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:390px){
+
+    .glass{
+        padding:25px 17px;
+    }
+
+    .text{
+        font-size:14px;
+    }
+
+    .hand{
+        font-size:14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+<div id="ambient"></div>
+<div id="grain"></div>
+
+<div id="app">
+
+<div class="top">
+    <span>faqat sen uchun</span>
+    <span id="clock">--:--</span>
+</div>
+
+
+<!-- =====================================================
+     1
+===================================================== -->
+
+<section class="screen active" id="screen1">
+
+<div class="glass">
+
+    <div class="mini">
+        bugungi kun haqida
+    </div>
+
+    <h1>
+        Bugun<br>
+        ko‘p narsani<br>
+        ko‘tarding.
+    </h1>
+
+    <div class="hand" id="introText"></div>
+
+    <div class="buttons">
+        <button
+            class="primary"
+            onclick="go(2)">
+            davom etaman
+        </button>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     2
+===================================================== -->
+
+<section class="screen" id="screen2">
+
+<div class="glass">
+
+    <div class="mini">
+        men seni ayblamayman
+    </div>
+
+    <h2>
+        Bugun charchaganing
+        bejiz emas.
+    </h2>
+
+    <div class="text">
+
+        Kun bo‘yi ishlar bilan
+        yugurding.
+
+        Bir narsani tugatsang,
+        yana bittasi chiqdi.
+
+        Eng yomoni esa —
+        yordam kerak bo‘lgan paytda
+        ikki singling ham
+        yordamlashmadi.
+
+        <br><br>
+
+        Shuning uchun bugun
+        “nega hammasini uddalay olmading?”
+        degan gap kerak emas.
+
+        <br><br>
+
+        <b>
+        Chunki sen allaqachon
+        qo‘lingdan kelganini qilding.
+        </b>
+
+    </div>
+
+    <div class="buttons">
+        <button
+            class="primary"
+            onclick="go(3)">
+            keyin nima?
+        </button>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     3 — DAM OLISH
+===================================================== -->
+
+<section class="screen" id="screen3">
+
+<div class="glass rest">
+
+    <div class="rest-icon">
+        ☁
+    </div>
+
+    <div class="mini">
+        endi hech narsa qilma
+    </div>
+
+    <h2>
+        30 soniyaga
+        hammasini qo‘y.
+    </h2>
+
+    <div class="text">
+        Telefonni qo‘lingda qoldir.
+        Faqat ekranga qarab,
+        sekin nafas ol.
+    </div>
+
+    <div class="breath">
+        <div
+            class="breath-circle"
+            id="breathCircle">
+            nafas ol
+        </div>
+    </div>
+
+    <div
+        class="small"
+        id="breathText">
+        shoshilma...
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     4 — MEHNAT
+===================================================== -->
+
+<section class="screen" id="screen4">
+
+<div class="glass">
+
+    <div class="mini">
+        bugun qilganlaring
+    </div>
+
+    <h2>
+        Balki sen buni
+        oddiy deb o‘ylarsan.
+    </h2>
+
+    <div class="text">
+        Lekin charchagan odamga
+        oddiy ko‘ringan ishlarning
+        o‘zi ham og‘ir bo‘ladi.
+    </div>
+
+    <div class="work-list">
+
+        <div class="work">
+            <div class="work-icon">✓</div>
+
+            <div class="work-text">
+                Bugungi ishlaringni qilding
+                <small>birinchisi ham tugadi</small>
+            </div>
+        </div>
+
+        <div class="work">
+            <div class="work-icon">✓</div>
+
+            <div class="work-text">
+                Charchasang ham davom etding
+                <small>bu ham kuch</small>
+            </div>
+        </div>
+
+        <div class="work">
+            <div class="work-icon">✓</div>
+
+            <div class="work-text">
+                Yana boshqalarga ham qarading
+                <small>o‘zing charchagan bo‘lsang ham</small>
+            </div>
+        </div>
+
+        <div class="work">
+            <div class="work-icon">✓</div>
+
+            <div class="work-text">
+                Va nihoyat shu yerga kelding
+                <small>endi navbat — dam olishga</small>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="buttons">
+        <button
+            class="primary"
+            onclick="go(5)">
+            endi yetarli
+        </button>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     5 — TUN
+===================================================== -->
+
+<section class="screen" id="screen5">
+
+<div class="glass">
+
+    <div class="mini">
+        bugungi kunning oxiri
+    </div>
+
+    <h2>
+        Tasavvur qil...
+    </h2>
+
+    <div class="text">
+        Hamma ishlar tugagan.
+
+        <br><br>
+
+        Hech kim:
+        “buni ham qil”
+        demayapti.
+
+        Hech kim sendan hech narsa
+        kutmayapti.
+
+        <br><br>
+
+        Faqat sen.
+        Tinch xona.
+        Va bir oz sokinlik.
+
+    </div>
+
+    <div class="night">
+
+        <div class="moon"></div>
+
+        <span class="star"
+              style="left:18%;top:25%"></span>
+
+        <span class="star"
+              style="left:35%;top:48%"></span>
+
+        <span class="star"
+              style="left:56%;top:20%"></span>
+
+        <span class="star"
+              style="left:72%;top:62%"></span>
+
+        <span class="star"
+              style="left:83%;top:32%"></span>
+
+        <span class="star"
+              style="left:12%;top:70%"></span>
+
+    </div>
+
+    <div class="buttons">
+        <button
+            class="primary"
+            onclick="go(6)">
+            shu yerda qol
+        </button>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     6 — FINAL
+===================================================== -->
+
+<section class="screen" id="screen6">
+
+<div class="glass final">
+
+    <div class="final-mark">
+        🤍
+    </div>
+
+    <div class="mini">
+        oxirgi xabar
+    </div>
+
+    <h2>
+        Bugun sendan
+        hech narsa so‘ramayman.
+    </h2>
+
+    <div
+        class="hand final-text"
+        id="finalText">
+    </div>
+
+    <div class="signature">
+        Bugun shunchaki dam ol, go‘zalim.
+    </div>
+
+</div>
+
+</section>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   CLOCK
+===================================================== */
+
+function clock(){
+
+    const d = new Date();
+
+    const h =
+        String(d.getHours()).padStart(2,"0");
+
+    const m =
+        String(d.getMinutes()).padStart(2,"0");
+
+    document.getElementById("clock")
+        .textContent =
+        h + ":" + m;
+}
+
+clock();
+
+setInterval(clock,1000);
+
+
+/* =====================================================
+   SCREEN SYSTEM
+===================================================== */
+
+let current = 1;
+
+function go(number){
+
+    const old =
+        document.getElementById(
+            "screen"+current
+        );
+
+    const next =
+        document.getElementById(
+            "screen"+number
+        );
+
+    if(!next)return;
+
+    old.classList.remove("active");
+
+    setTimeout(()=>{
+
+        next.classList.add("active");
+
+    },120);
+
+    current=number;
+
+    if(number===3){
+
+        startBreathing();
+
+    }
+
+    if(number===6){
+
+        startFinal();
+
+    }
+
+}
+
+
+/* =====================================================
+   TYPEWRITER
+===================================================== */
+
+let typing = null;
+
+function typeText(
+    element,
+    text,
+    speed=32,
+    callback=null
+){
+
+    if(typing)
+        clearInterval(typing);
+
+    element.textContent="";
+
+    let i=0;
+
+    typing=setInterval(()=>{
+
+        element.textContent =
+            text.slice(0,i);
+
+        i++;
+
+        if(i > text.length){
+
+            clearInterval(typing);
+
+            if(callback)
+                callback();
+
+        }
+
+    },speed);
+}
+
+
+/* =====================================================
+   INTRO
+===================================================== */
+
+typeText(
+
+    document.getElementById(
+        "introText"
+    ),
+
+`Bugun seni xursand qilish uchun
+baland ovozli gaplar kerak emas.
+
+Men bugun sening charchaganingni
+ko‘ryapman.
+
+Shuning uchun bu safar
+seni kuldirishga ham majburlamayman.
+
+Avval biroz tinchlanamiz.
+
+Keyin esa senga bir narsani
+eslataman...`,
+
+    29
+);
+
+
+/* =====================================================
+   BREATHING
+===================================================== */
+
+let breathTimer;
+
+function startBreathing(){
+
+    const circle =
+        document.getElementById(
+            "breathCircle"
+        );
+
+    const text =
+        document.getElementById(
+            "breathText"
+        );
+
+    let count=0;
+
+    clearInterval(breathTimer);
+
+    function cycle(){
+
+        if(count>=4){
+
+            circle.classList.remove("in");
+
+            text.textContent =
+                "bo‘ldi... endi biroz yengilroq.";
+
+            setTimeout(()=>{
+                go(4);
+            },1300);
+
+            return;
+        }
+
+        circle.classList.add("in");
+
+        circle.textContent =
+            "nafas ol";
+
+        text.textContent =
+            "sekin nafas ol...";
+
+        setTimeout(()=>{
+
+            circle.classList.remove("in");
+
+            circle.textContent =
+                "chiqar";
+
+            text.textContent =
+                "endi asta chiqar...";
+
+        },4000);
+
+        count++;
+
+    }
+
+    cycle();
+
+    breathTimer =
+        setInterval(
+            cycle,
+            8000
+        );
+
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+function startFinal(){
+
+    const message =
+
+`Go‘zalim...
+
+Bugun juda ko‘p ish qilding.
+
+Charchading.
+
+Yana yordam kerak bo‘lgan paytda
+ikki singling ham yoningda
+bo‘lmadi.
+
+Balki shuning uchun ham
+bugungi kun odatdagidan
+og‘irroq tuyulgandir.
+
+Lekin bir narsani bil:
+
+hamma narsani doim
+o‘zing ko‘tarishing shart emas.
+
+Bugun kuchli bo‘lishni
+to‘xtatishing mumkin.
+
+Bugun shunchaki qiz bo‘l.
+
+Charchasang — dam ol.
+
+Gapirg­ing kelmasa — gapirma.
+
+Ko‘zing ilinsa — uxla.
+
+Hech kimga hech narsani
+isbotlashing shart emas.
+
+Sen bugun yetarlicha
+harakat qilding.
+
+Endi qolganini ertaga
+qilamiz.
+
+Bugun esa...
+
+o‘zingni asra.
+
+Men esa seni tushunishga
+harakat qiladigan inson
+bo‘lib yoningda qolaman.
+
+Yaxshi dam ol,
+go‘zalim. 🤍`;
+
+    typeText(
+        document.getElementById(
+            "finalText"
+        ),
+        message,
+        27
+    );
+
+}
+
+</script>
+
+</body>
+  </html>
